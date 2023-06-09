@@ -1,0 +1,86 @@
+{
+  "name": "interactive-post-management",
+  "version": "0.1.0",
+  "private": true,
+  "description": "interactive-post-management",
+  "repository": "https://github.com/mahmoud-mamdouh-matwaly/interactive-post-management",
+  "homepage": "https://mahmoud-mamdouh-matwaly.github.io/interactive-post-management",
+  "contributors": [
+    {
+      "name": "Mahmoud Mamdouh <mahmoud-mamdouh-matwaly>",
+      "email": "mahmoud.m.alawady@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "@chakra-ui/icons": "^2.0.19",
+    "@chakra-ui/react": "^2.7.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.4.0",
+    "formik": "^2.4.1",
+    "framer-motion": "^10.12.16",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.9.0",
+    "react-modal": "^3.16.1",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.11.2",
+    "react-scripts": "5.0.1",
+    "redux-saga": "^1.2.3",
+    "styled-components": "^6.0.0-rc.3",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint:check": "eslint --ext .js --ext .jsx .",
+    "lint:fix": "eslint --fix --ext .js --ext .jsx .",
+    "prettier": "prettier --ignore-path .gitignore   \"**/*.js\"",
+    "format": "yarn run prettier -- --write",
+    "prepare": "husky install",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.5",
+    "@commitlint/config-conventional": "^17.6.5",
+    "eslint": "^8.41.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "gh-pages": "^5.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.2",
+    "prettier": "^2.8.8"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": "yarn run lint:check",
+    "src/**/*.{js,jsx,css}": "yarn run format"
+  },
+  "main": "index.js"
+}
