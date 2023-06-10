@@ -2,17 +2,25 @@ import { memo } from 'react';
 import PropTypes from 'prop-types';
 import BaseButton from 'components/button';
 import { useFormik } from 'formik';
-import { Flex, Box } from '@chakra-ui/react';
-import FormikInput from "components/input";
+import { Flex, Box, Spacer } from '@chakra-ui/react';
+import FormikInput from 'components/input';
+import { object, string } from 'yup';
+
+const validationSchema = object({
+  title: string().required('Title is required'),
+  body: string().required('Description is required'),
+});
 
 const PostForm = props => {
   const { postItem, handleSubmit = () => {}, isView = false } = props;
 
   const formik = useFormik({
     initialValues: {
-      title: postItem?.title || '',
-      body: postItem?.body || '',
+      title: postItem?.title,
+      body: postItem?.body,
     },
+    enableReinitialize: true,
+    validationSchema: validationSchema,
     onSubmit: values => {
       handleSubmit({ ...values });
     },
@@ -21,7 +29,7 @@ const PostForm = props => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <Flex direction={isView ? 'column' : 'row'} w="100%">
-        <Box>
+        <Box w={isView ? '100%' : '48%'}>
           <FormikInput
             label="Title"
             handleChange={formik.handleChange}
@@ -29,9 +37,12 @@ const PostForm = props => {
             value={formik.values.title}
             hasError={!!(formik.touched.title && formik.errors.title)}
             messageError={formik.errors.title}
+            name="title"
+            readOnly={isView}
           />
         </Box>
-        <Box>
+        <Spacer />
+        <Box w={isView ? '100%' : '48%'}>
           <FormikInput
             label="Description"
             handleChange={formik.handleChange}
@@ -40,12 +51,14 @@ const PostForm = props => {
             hasError={!!(formik.touched.body && formik.errors.body)}
             messageError={formik.errors.body}
             isTextArea={true}
+            name="body"
+            readOnly={isView}
           />
         </Box>
       </Flex>
       {!isView ? (
-        <Flex gutter={[10, 10]} align={'end'}>
-          <BaseButton type="primary" htmlType="submit" text="Submit" />
+        <Flex w="100%" align="center" justify={'end'} my="md">
+          <BaseButton type="primary" htmlType="submit" text="Submit" bg="blue.600" color="white" />
         </Flex>
       ) : null}
     </form>
