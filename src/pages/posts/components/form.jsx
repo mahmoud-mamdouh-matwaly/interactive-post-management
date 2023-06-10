@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import BaseButton from 'components/button';
 import { useFormik } from 'formik';
@@ -13,6 +13,7 @@ const validationSchema = object({
 
 const PostForm = props => {
   const { postItem, handleSubmit = () => {}, isView = false } = props;
+  const [disabled, setDisabled] = useState(true);
 
   const formik = useFormik({
     initialValues: {
@@ -26,14 +27,18 @@ const PostForm = props => {
     },
   });
 
+  const handleChange = useCallback(e => {
+    formik.handleChange(e);
+    setDisabled(false);
+  }, []);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <Flex direction={isView ? 'column' : 'row'} w="100%">
         <Box w={isView ? '100%' : '48%'}>
           <FormikInput
             label="Title"
-            handleChange={formik.handleChange}
-            handleBlur={formik.handleBlur}
+            handleChange={handleChange}
             value={formik.values.title}
             hasError={!!(formik.touched.title && formik.errors.title)}
             messageError={formik.errors.title}
@@ -45,8 +50,7 @@ const PostForm = props => {
         <Box w={isView ? '100%' : '48%'}>
           <FormikInput
             label="Description"
-            handleChange={formik.handleChange}
-            handleBlur={formik.handleBlur}
+            handleChange={handleChange}
             value={formik.values.body}
             hasError={!!(formik.touched.body && formik.errors.body)}
             messageError={formik.errors.body}
@@ -58,7 +62,14 @@ const PostForm = props => {
       </Flex>
       {!isView ? (
         <Flex w="100%" align="center" justify={'end'} my="md">
-          <BaseButton type="primary" htmlType="submit" text="Submit" bg="blue.600" color="white" />
+          <BaseButton
+            type="primary"
+            htmlType="submit"
+            text="Submit"
+            bg="blue.600"
+            color="white"
+            isDisabled={disabled}
+          />
         </Flex>
       ) : null}
     </form>
