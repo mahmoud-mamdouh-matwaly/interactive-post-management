@@ -2,7 +2,7 @@ import { useEffect, useCallback, Suspense, lazy } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchPostItem, updatePostItem } from './store/slice';
-import BaseMessage from 'components/message';
+import BaseToast from 'components/toast';
 import PageHeading from './components/page-heading';
 import { Spinner, Flex } from '@chakra-ui/react';
 
@@ -15,7 +15,7 @@ const PostDetails = () => {
 
   const { postItem, isLoading } = useSelector(state => state.postsReducer);
   const {
-    alert: { type },
+    alert: { type, message },
   } = useSelector(state => state.uiReducer);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const PostDetails = () => {
   }, [postItem]);
 
   useEffect(() => {
-    if (type === 'success') {
+    if (type.includes('success')) {
       navigate(-1);
     }
   }, [type]);
@@ -49,7 +49,7 @@ const PostDetails = () => {
       <Suspense fallback={<Spinner />}>
         <Form postItem={postItem} handleSubmit={handleSubmit} />
       </Suspense>
-      {type ? <BaseMessage /> : null}
+      {type.includes('error') ? <BaseToast type={type} message={message} /> : null}
     </Flex>
   );
 };

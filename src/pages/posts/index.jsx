@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense, lazy, useCallback, useMemo, useState } from 'react';
+import { useEffect, Suspense, lazy, useCallback, useMemo, useState, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -9,7 +9,7 @@ import { Text, Flex, Spinner, Grid, GridItem } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
 
 import BaseButton from 'components/button';
-import BaseMessage from 'components/message';
+import BaseToast from 'components/toast';
 import BaseModal from 'components/modal';
 
 const Form = lazy(() => import('pages/posts/components/form'));
@@ -19,25 +19,28 @@ const PostsPage = () => {
   const navigate = useNavigate();
   const { data, isLoading, searchTerm, deleteStatus } = useSelector(state => state.postsReducer);
   const {
-    alert: { type },
+    alert: { type, message },
   } = useSelector(state => state.uiReducer);
   const dispatch = useDispatch();
 
   const [showModal, setShowModal] = useState({ isOpen: false, id: null, item: null });
 
+  useEffect(() => {
+    if (!data?.length) {
+      dispatch(fetchPosts());
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (deleteStatus.includes('success')) {
+      handleCancel();
+      dispatch(resetDeleteStatus());
+    }
+  }, [deleteStatus]);
+
   const handleClickEdit = useCallback(item => {
     dispatch(setPostItem(item));
     navigate(`/interactive-post-management/post-details/${item.id}`);
-  }, []);
-
-  const handleDelete = useCallback(item => {
-    setShowModal(prev => {
-      return {
-        ...prev,
-        isOpen: !prev.isOpen,
-        id: item?.id,
-      };
-    });
   }, []);
 
   const handleClickView = useCallback(item => {
@@ -50,11 +53,19 @@ const PostsPage = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!data?.length) {
-      dispatch(fetchPosts());
-    }
-  }, [data]);
+  const handleDelete = useCallback(item => {
+    setShowModal(prev => {
+      return {
+        ...prev,
+        isOpen: !prev.isOpen,
+        id: item?.id,
+      };
+    });
+  }, []);
+
+  const handleSubmitDeletePost = () => {
+    dispatch(deletePostItem({ id: showModal.id }));
+  };
 
   const handleChangeSearch = useCallback(
     event => {
@@ -62,10 +73,6 @@ const PostsPage = () => {
     },
     [dispatch]
   );
-
-  const handleSubmitDeletePost = () => {
-    dispatch(deletePostItem({ id: showModal.id }));
-  };
 
   const handleCancel = () => {
     setShowModal({
@@ -75,15 +82,8 @@ const PostsPage = () => {
     });
   };
 
-  useEffect(() => {
-    if (deleteStatus === 'success') {
-      handleCancel();
-      dispatch(resetDeleteStatus());
-    }
-  }, [deleteStatus]);
-
   const filteredPosts = useMemo(() => {
-    return data.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    return data?.filter(post => post?.title.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [searchTerm, data]);
 
   return (
@@ -97,77 +97,31 @@ const PostsPage = () => {
         <GridItem>Actions</GridItem>
         {filteredPosts.map(post => {
           return (
-            <React.Fragment key={post.id}>
-              <GridItem>
-                <Text>{post.title}</Text>
-              </GridItem>
-              <GridItem>
-                <Text>{post.body}</Text>
-              </GridItem>
-              <GridItem>
-                <Flex>
-                  <BaseButton
-                    className="btn"
-                    type="text"
-                    icon={<ViewIcon />}
-                    onClick={() => handleClickView(post)}
-                    p="0"
-                    bg="transparent"
-                    m="0"
-                    _hover={{
-                      bg: 'gray.700',
-                      color: 'white',
-                    }}
-                  />
-                  <BaseButton
-                    className="btn"
-                    type="text"
-                    icon={<EditIcon />}
-                    onClick={() => handleClickEdit(post)}
-                    p="0"
-                    bg="transparent"
-                    color="blue.500"
-                    _hover={{
-                      bg: 'blue.500',
-                      color: 'white',
-                    }}
-                  />
-                  <BaseButton
-                    className="btn"
-                    type="text"
-                    icon={<DeleteIcon />}
-                    danger
-                    onClick={() => handleDelete(post)}
-                    bg="transparent"
-                    p="0"
-                    color="red.500"
-                    _hover={{
-                      bg: 'red.500',
-                      color: 'white',
-                    }}
-                  />
-                </Flex>
-              </GridItem>
-            </React.Fragment>
+            <PostItem
+              key={post.id}
+              post={post}
+              handleClickView={handleClickView}
+              handleClickEdit={handleClickEdit}
+              handleDelete={handleDelete}
+            />
           );
         })}
       </Grid>
 
-      {type ? <BaseMessage /> : null}
       <ModalsContainer
         handleCancel={handleCancel}
         handleSubmit={handleSubmitDeletePost}
         showModal={showModal}
         isLoading={isLoading}
-        danger={true}
       />
+      {type ? <BaseToast type={type} message={message} /> : null}
     </Flex>
   );
 };
 
 export default PostsPage;
 
-function ModalsContainer(props) {
+const ModalsContainer = memo(props => {
   const { handleCancel, handleSubmit, showModal, isLoading } = props;
 
   return (
@@ -178,7 +132,7 @@ function ModalsContainer(props) {
         isModalOpen={showModal.isOpen && !showModal.item}
         okText="Delete"
         isLoading={isLoading}
-        danger={true}
+        danger
       >
         <Text>Are you sure, you want to delete this post?</Text>
       </BaseModal>
@@ -195,7 +149,7 @@ function ModalsContainer(props) {
       </BaseModal>
     </>
   );
-}
+});
 
 ModalsContainer.propTypes = {
   handleCancel: PropTypes.func,
@@ -206,4 +160,70 @@ ModalsContainer.propTypes = {
     id: PropTypes.number,
   }),
   isLoading: PropTypes.bool,
+};
+
+const PostItem = memo(props => {
+  const { post, handleClickView, handleClickEdit, handleDelete } = props;
+  return (
+    <>
+      <GridItem>
+        <Text>{post.title}</Text>
+      </GridItem>
+      <GridItem>
+        <Text>{post.body}</Text>
+      </GridItem>
+      <GridItem>
+        <Flex>
+          <BaseButton
+            type="text"
+            icon={<ViewIcon />}
+            onClick={() => handleClickView(post)}
+            p="0"
+            bg="transparent"
+            m="0"
+            _hover={{
+              bg: 'gray.700',
+              color: 'white',
+            }}
+          />
+          <BaseButton
+            type="text"
+            icon={<EditIcon />}
+            onClick={() => handleClickEdit(post)}
+            p="0"
+            bg="transparent"
+            color="blue.500"
+            _hover={{
+              bg: 'blue.500',
+              color: 'white',
+            }}
+          />
+          <BaseButton
+            type="text"
+            icon={<DeleteIcon />}
+            danger
+            onClick={() => handleDelete(post)}
+            bg="transparent"
+            p="0"
+            color="red.500"
+            _hover={{
+              bg: 'red.500',
+              color: 'white',
+            }}
+          />
+        </Flex>
+      </GridItem>
+    </>
+  );
+});
+
+PostItem.propTypes = {
+  handleClickEdit: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleClickView: PropTypes.func,
+  post: PropTypes.shape({
+    id: PropTypes.number,
+    title: PropTypes.string,
+    body: PropTypes.string,
+  }),
 };
