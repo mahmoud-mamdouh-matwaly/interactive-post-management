@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, Suspense, lazy, useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -11,13 +11,16 @@ import {
   deletePostItem,
   resetDeleteStatus,
 } from './store/slice';
-import BaseButton from 'components/button';
-import BaseMessage from 'components/message';
-import PageHeading from './components/page-heading';
-import BaseModal from 'components/modal';
-import Form from './components/form';
+
 import { Text, Flex, Spinner, Grid, GridItem } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
+
+import BaseButton from 'components/button';
+import BaseMessage from 'components/message';
+import BaseModal from 'components/modal';
+
+const Form = lazy(() => import('pages/posts/components/form'));
+const PageHeading = lazy(() => import('pages/posts/components/page-heading'));
 
 const PostsPage = () => {
   const navigate = useNavigate();
@@ -37,7 +40,7 @@ const PostsPage = () => {
 
   const handleClickEdit = useCallback(item => {
     dispatch(setPostItem(item));
-    navigate(`/posts-management/post-details/${item.id}`);
+    navigate(`/interactive-post-management/post-details/${item.id}`);
   }, []);
 
   const handleDelete = useCallback(item => {
@@ -49,6 +52,7 @@ const PostsPage = () => {
       };
     });
   }, []);
+
   const handleClickView = useCallback(item => {
     setShowModal(prev => {
       return {
@@ -96,40 +100,72 @@ const PostsPage = () => {
   }, [searchTerm, data]);
 
   return (
-    <Flex direction="column" bg={'white'}>
-      <PageHeading title="Posts" hasSearch={true} handleChangeSearch={handleChangeSearch} />
+    <Flex direction="column" bg="white" px="sm" py="xl">
       <Suspense fallback={<Spinner />}>
-        <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-          <GridItem>Title</GridItem>
-          <GridItem>Description</GridItem>
-          <GridItem>Actions</GridItem>
-          {filteredPosts.map(post => {
-            return (
-              <React.Fragment key={post.id}>
-                <GridItem w="100%">
-                  <Text>{post.title}</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Text>{post.body}</Text>
-                </GridItem>
-                <GridItem w="100%">
-                  <Flex>
-                    <BaseButton className="btn" type="text" icon={<ViewIcon />} onClick={() => handleClickView(post)} />
-                    <BaseButton className="btn" type="text" icon={<EditIcon />} onClick={() => handleClickEdit(post)} />
-                    <BaseButton
-                      className="btn"
-                      type="text"
-                      icon={<DeleteIcon />}
-                      danger
-                      onClick={() => handleDelete(post)}
-                    />
-                  </Flex>
-                </GridItem>
-              </React.Fragment>
-            );
-          })}
-        </Grid>
+        <PageHeading title="Posts" hasSearch={true} handleChangeSearch={handleChangeSearch} />
       </Suspense>
+      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <GridItem>Title</GridItem>
+        <GridItem>Description</GridItem>
+        <GridItem>Actions</GridItem>
+        {filteredPosts.map(post => {
+          return (
+            <React.Fragment key={post.id}>
+              <GridItem>
+                <Text>{post.title}</Text>
+              </GridItem>
+              <GridItem>
+                <Text>{post.body}</Text>
+              </GridItem>
+              <GridItem>
+                <Flex>
+                  <BaseButton
+                    className="btn"
+                    type="text"
+                    icon={<ViewIcon />}
+                    onClick={() => handleClickView(post)}
+                    p="0"
+                    bg="transparent"
+                    m="0"
+                    _hover={{
+                      bg: 'gray.700',
+                      color: 'white',
+                    }}
+                  />
+                  <BaseButton
+                    className="btn"
+                    type="text"
+                    icon={<EditIcon />}
+                    onClick={() => handleClickEdit(post)}
+                    p="0"
+                    bg="transparent"
+                    color="blue.500"
+                    _hover={{
+                      bg: 'blue.500',
+                      color: 'white',
+                    }}
+                  />
+                  <BaseButton
+                    className="btn"
+                    type="text"
+                    icon={<DeleteIcon />}
+                    danger
+                    onClick={() => handleDelete(post)}
+                    bg="transparent"
+                    p="0"
+                    color="red.500"
+                    _hover={{
+                      bg: 'red.500',
+                      color: 'white',
+                    }}
+                  />
+                </Flex>
+              </GridItem>
+            </React.Fragment>
+          );
+        })}
+      </Grid>
+
       {type ? <BaseMessage /> : null}
       <ModalsContainer
         handleCancel={handleCancel}
@@ -155,7 +191,8 @@ function ModalsContainer(props) {
         isModalOpen={showModal.isOpen && !showModal.item}
         okText="Delete"
         isLoading={isLoading}
-        danger={true}>
+        danger={true}
+      >
         <Text>Are you sure, you want to delete this post?</Text>
       </BaseModal>
 
@@ -163,8 +200,11 @@ function ModalsContainer(props) {
         handleCancel={handleCancel}
         handleSubmit={handleSubmit}
         isModalOpen={showModal.isOpen && !!showModal.item}
-        isLoading={isLoading}>
-        <Form postItem={showModal?.item} isView={true} />
+        isLoading={isLoading}
+      >
+        <Suspense fallback={<Spinner />}>
+          <Form postItem={showModal?.item} isView={true} />
+        </Suspense>
       </BaseModal>
     </>
   );

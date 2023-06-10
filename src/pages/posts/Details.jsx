@@ -1,19 +1,17 @@
 import { useEffect, useCallback, Suspense, lazy } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
- import { fetchPostItem, updatePostItem } from './store/slice';
+import { fetchPostItem, updatePostItem } from './store/slice';
 import BaseMessage from 'components/message';
 import PageHeading from './components/page-heading';
 import { Spinner, Flex } from '@chakra-ui/react';
 
 const Form = lazy(() => import('./components/form'));
 
- 
 const PostDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
- 
 
   const { postItem, isLoading } = useSelector(state => state.postsReducer);
   const {
@@ -46,7 +44,7 @@ const PostDetails = () => {
     );
   }
   return (
-    <Flex direction="vertical"  >
+    <Flex direction="column" bg="white" px="sm" py="xl">
       <PageHeading title="Post Details" hasBack={true} />
       <Suspense fallback={<Spinner />}>
         <Form postItem={postItem} handleSubmit={handleSubmit} />
