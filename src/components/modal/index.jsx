@@ -23,7 +23,8 @@ const BaseModal = props => {
       onOk={handleSubmit}
       onCancel={handleCancel}
       okText={okText}
-      confirmLoading={isLoading}>
+      confirmLoading={isLoading}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalBody>{children}</ModalBody>
@@ -34,10 +35,16 @@ const BaseModal = props => {
               key="submit"
               type="primary"
               text={okText}
-              danger={danger}
               loading={isLoading}
               onClick={handleSubmit}
               isDisabled={isDisabled}
+              ml="md"
+              bg={danger ? 'red.500' : 'gray.100'}
+              color={danger ? 'white' : 'black'}
+              _hover={{
+                bg: danger ? 'red.500' : 'gray.100',
+                color: 'white',
+              }}
             />
           )}
         </ModalFooter>

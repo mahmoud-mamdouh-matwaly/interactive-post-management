@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {   Textarea, Input, Text } from '@chakra-ui/react';
+import { Textarea, Input, Text } from '@chakra-ui/react';
 
 const FormikInput = props => {
   const {
@@ -11,15 +11,16 @@ const FormikInput = props => {
     messageError,
     readOnly = false,
     isTextArea = false,
+    name,
   } = props;
 
   return (
     <>
-      <label htmlFor={label}>{label}</label>
+      <label htmlFor={label}>{label} : </label>
       {!isTextArea && (
         <Input
           id={label}
-          name={label}
+          name={name}
           type="text"
           onChange={handleChange}
           onBlur={handleBlur}
@@ -32,7 +33,7 @@ const FormikInput = props => {
       {isTextArea && (
         <Textarea
           id={label}
-          name={label}
+          name={name}
           type="text"
           onChange={handleChange}
           onBlur={handleBlur}
@@ -42,7 +43,7 @@ const FormikInput = props => {
           placeholder={label}
         />
       )}
-      {hasError ? <Text>{messageError}</Text> : null}
+      {hasError ? <Text color="red.500">{messageError}</Text> : null}
     </>
   );
 };
@@ -56,4 +57,5 @@ FormikInput.propTypes = {
   messageError: PropTypes.string,
   readOnly: PropTypes.bool,
   isTextArea: PropTypes.bool,
+  name: PropTypes.string,
 };
