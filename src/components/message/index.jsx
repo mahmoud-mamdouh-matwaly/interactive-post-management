@@ -1,41 +1,32 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Alert, AlertIcon, useDisclosure } from '@chakra-ui/react';
+import { createStandaloneToast } from '@chakra-ui/react';
+const { ToastContainer, toast } = createStandaloneToast();
 
 const BaseMessage = () => {
   const {
     alert: { type, message: text },
   } = useSelector(state => state.uiReducer);
 
-  const { isOpen, onClose, onOpen } = useDisclosure({ defaultIsOpen: true });
-
   useEffect(() => {
-    if (type) {
-      onOpen();
-    } else {
-      onClose();
+    if (type === 'success') {
+      toast({
+        description: text,
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+      });
+    }
+    if (type === 'error' || type === 'networkError') {
+      toast({
+        description: text,
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+      });
     }
   }, [alert]);
-
-  return (
-    isOpen && (
-      <>
-        {type === 'error' ||
-          (type === 'networkError' && (
-            <Alert status="error">
-              <AlertIcon />
-              {text}
-            </Alert>
-          ))}
-        {type === 'success' && (
-          <Alert status="success">
-            <AlertIcon />
-            {text}
-          </Alert>
-        )}
-      </>
-    )
-  );
+  return <ToastContainer />;
 };
 
 export default BaseMessage;
