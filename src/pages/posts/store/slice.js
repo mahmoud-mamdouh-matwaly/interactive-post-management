@@ -5,7 +5,6 @@ const initialState = {
   isLoading: false,
   data: [],
   postItem: null,
-  currentPage: 1,
   searchTerm: '',
   deleteStatus: 'idle',
 };
@@ -53,9 +52,7 @@ const postsSlice = createSlice({
     updatePostItemFailed: state => {
       state.isLoading = false;
     },
-    setCurrentPage: (state, action) => {
-      state.currentPage = action.payload;
-    },
+
     setSearchTerm: state => state,
     setSearchTermSuccess: (state, action) => {
       state.searchTerm = action.payload;
@@ -92,7 +89,6 @@ export const {
   updatePostItem,
   updatePostItemSuccess,
   updatePostItemFailed,
-  setCurrentPage,
   setSearchTerm,
   setSearchTermSuccess,
   deletePostItem,

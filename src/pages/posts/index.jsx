@@ -3,14 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import {
-  fetchPosts,
-  setPostItem,
-  // setCurrentPage,
-  setSearchTerm,
-  deletePostItem,
-  resetDeleteStatus,
-} from './store/slice';
+import { fetchPosts, setPostItem, setSearchTerm, deletePostItem, resetDeleteStatus } from './store/slice';
 
 import { Text, Flex, Spinner, Grid, GridItem } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
@@ -24,13 +17,7 @@ const PageHeading = lazy(() => import('pages/posts/components/page-heading'));
 
 const PostsPage = () => {
   const navigate = useNavigate();
-  const {
-    data,
-    isLoading,
-    // currentPage,
-    searchTerm,
-    deleteStatus,
-  } = useSelector(state => state.postsReducer);
+  const { data, isLoading, searchTerm, deleteStatus } = useSelector(state => state.postsReducer);
   const {
     alert: { type },
   } = useSelector(state => state.uiReducer);
