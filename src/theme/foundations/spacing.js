@@ -14,5 +14,5 @@ export const space = {
   md: toRem(16),
   sm: toRem(12),
   xs: toRem(8),
-  '2xs': toRem(4)
+  '2xs': toRem(4),
 };

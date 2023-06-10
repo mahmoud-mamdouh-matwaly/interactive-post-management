@@ -55,5 +55,3 @@ Your app is ready to be deployed!
 5. [React Router](https://reactrouter.com/en/main)
 6. [React](https://react.dev/)
 7. [formik](https://formik.org/docs/overview)
-
-

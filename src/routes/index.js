@@ -1,7 +1,7 @@
 import { Flex, Spinner } from '@chakra-ui/react';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
- 
+
 const PostsPage = lazy(() => import('pages/posts'));
 const PostDetailsPage = lazy(() => import('pages/posts/Details'));
 const BaseLayOut = lazy(() => import('layout'));
