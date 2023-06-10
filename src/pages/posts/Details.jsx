@@ -38,7 +38,7 @@ const PostDetails = () => {
   );
   if (isLoading) {
     return (
-      <Flex align={'middle'} justify="center">
+      <Flex align="center" justify="center">
         <Spinner />
       </Flex>
     );
