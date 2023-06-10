@@ -21,7 +21,7 @@ const SidebarContent = () => {
   return (
     <Box borderRight="1px" borderRightColor="gray.300" w="100%" h="100vh">
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="xl" fontFamily="monospace" fontWeight="bold">
+        <Text fontSize="xl" color="white" fontWeight="bold">
           Logo
         </Text>
       </Flex>
@@ -44,10 +44,12 @@ const NavItem = ({ icon, children, path }) => {
         borderRadius="lg"
         role="group"
         cursor="pointer"
+        color="white"
         _hover={{
-          bg: 'cyan.400',
+          bg: 'blue.500',
           color: 'white',
-        }}>
+        }}
+      >
         {icon && (
           <Icon
             mr="4"

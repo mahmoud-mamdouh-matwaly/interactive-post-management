@@ -1,7 +1,9 @@
-import BaseSidebar from './sidebar';
-import BaseHeader from './header/header';
+import { Suspense, lazy } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Grid, GridItem, useDisclosure } from '@chakra-ui/react';
+import { Grid, GridItem, useDisclosure, Spinner } from '@chakra-ui/react';
+
+const BaseHeader = lazy(() => import('layout/header'));
+const BaseSidebar = lazy(() => import('layout/sidebar'));
 
 const BaseLayOut = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -12,16 +14,21 @@ const BaseLayOut = () => {
     "nav main"
     "nav footer"`}
       gridTemplateRows={'60px 1fr 30px'}
-      gridTemplateColumns={'250px 1fr'}
-       gap="1"
-      fontWeight="bold">
-      <GridItem pl="2" bg="gray.100" area={'nav'}>
-        <BaseSidebar isOpen={isOpen} onClose={onClose} />
+      gridTemplateColumns={'220px 1fr'}
+      gap="1"
+      fontWeight="bold"
+    >
+      <GridItem pl="2" bg="blue.950" area={'nav'}>
+        <Suspense fallback={<Spinner />}>
+          <BaseSidebar isOpen={isOpen} onClose={onClose} />
+        </Suspense>
       </GridItem>
-      <GridItem pl="2" bg="white.300" area={'header'}>
-        <BaseHeader setCollapsed={onOpen} collapsed={isOpen} />
+      <GridItem bg="white" area={'header'}>
+        <Suspense fallback={<Spinner />}>
+          <BaseHeader setCollapsed={onOpen} collapsed={isOpen} />
+        </Suspense>
       </GridItem>
-      <GridItem pl="2" area={'main'}>
+      <GridItem px="xs" pt="2xl" area={'main'} bg="gray.50">
         <Outlet />
       </GridItem>
     </Grid>
