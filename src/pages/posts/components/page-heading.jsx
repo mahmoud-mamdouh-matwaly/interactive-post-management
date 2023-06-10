@@ -15,7 +15,6 @@ const PageHeading = props => {
         <Flex align={'center'} justify={'space-between'}>
           {hasBack ? (
             <BaseButton
-              className="btn"
               type="text"
               icon={<ArrowBackIcon />}
               onClick={() => navigate(-1)}
