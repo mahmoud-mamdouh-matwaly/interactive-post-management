@@ -2,17 +2,7 @@ import PropTypes from 'prop-types';
 import { Textarea, Input, Text } from '@chakra-ui/react';
 
 const FormikInput = props => {
-  const {
-    label,
-    handleChange,
-    handleBlur,
-    value,
-    hasError,
-    messageError,
-    readOnly = false,
-    isTextArea = false,
-    name,
-  } = props;
+  const { label, handleChange, value, hasError, messageError, readOnly = false, isTextArea = false, name } = props;
 
   return (
     <>
@@ -23,7 +13,6 @@ const FormikInput = props => {
           name={name}
           type="text"
           onChange={handleChange}
-          onBlur={handleBlur}
           value={value}
           readOnly={readOnly}
           disabled={readOnly}
@@ -36,7 +25,6 @@ const FormikInput = props => {
           name={name}
           type="text"
           onChange={handleChange}
-          onBlur={handleBlur}
           value={value}
           readOnly={readOnly}
           disabled={readOnly}
@@ -48,10 +36,10 @@ const FormikInput = props => {
   );
 };
 export default FormikInput;
+
 FormikInput.propTypes = {
   label: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
-  handleBlur: PropTypes.func.isRequired,
   value: PropTypes.string,
   hasError: PropTypes.bool,
   messageError: PropTypes.string,
